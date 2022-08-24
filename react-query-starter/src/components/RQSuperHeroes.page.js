@@ -6,7 +6,15 @@ const fetchSuperheroes = () => {
 }
 
 export const RQSuperHeroesPage = () => {
-  const { isLoading, data, isError, error, isFetching } = useQuery(
+  const onSuccess = (data) => {
+    console.log('Perform side effect after data fetching', data)
+  }
+
+  const onError = (error) => {
+    console.log('Perform side effect after encountering an error', error)
+  }
+  
+  const { isLoading, data, isError, error, isFetching, refetch } = useQuery(
     'super-heroes',
     fetchSuperheroes,
     {
@@ -16,12 +24,15 @@ export const RQSuperHeroesPage = () => {
       refetchOnWindowFocus: true,
       refetchInterval: 2000, // polling - refetch every 2sec
       refetchIntervalInBackground: true,
+      enabled: false, // fetch data on event (button click), disable fetching onMount
+      onSuccess,
+      onError,
     }
   )
 
   console.log({ isLoading, isFetching })
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <h2>Loading...</h2>
   }
 
@@ -32,11 +43,10 @@ export const RQSuperHeroesPage = () => {
   return (
     <>
       <h2>RQ Super Heroes Page</h2>
-      {
-        data?.data.map(hero => {
-          return <div key={hero.id}>{hero.name}</div>
-        })
-      }
+      <button onClick={refetch}>Fetch heroes</button>
+      {data?.data.map(hero => {
+        return <div key={hero.id}>{hero.name}</div>
+      })}
     </>
   )
 }
