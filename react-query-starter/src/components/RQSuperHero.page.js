@@ -7,12 +7,12 @@ export const RQSuperHeroPage = () => {
     const { isLoading, data, isError, error } = useSuperHeroeData(heroId)
 
     if (isLoading) {
-        return <h2>Loading...</h2>
-      }
+      return <h2>Loading...</h2>
+    }
     
-      if (isError) {
-        return <h2>{error.message}</h2>
-      }
+    if (isError) {
+      return <h2>{error.message}</h2>
+    }
     
     return (
         <div>
