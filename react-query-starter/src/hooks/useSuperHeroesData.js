@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from 'react-query'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
 import axios from 'axios'
 
 const fetchSuperheroes = () => {
@@ -11,18 +11,23 @@ const addSuperHero = (hero) => {
 
 export const useSuperHeroesData = (onSuccess, onError) => {
   return useQuery('super-heroes', fetchSuperheroes, {
-    cacheTime: 300000, // 5min by default
-    staleTime: 0, // 0 by default
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-    refetchInterval: 2000, // polling - refetch every 2sec
-    refetchIntervalInBackground: true,
-    enabled: false, // fetch data on event (button click), disable fetching onMount
+    // cacheTime: 300000, // 5min by default
+    // staleTime: 0, // 0 by default
+    // refetchOnMount: true,
+    // refetchOnWindowFocus: true,
+    // refetchInterval: 2000, // polling - refetch every 2sec
+    // refetchIntervalInBackground: true,
+    // enabled: false, // fetch data on event (button click), disable fetching onMount
     onSuccess,
     onError,
   })
 }
 
 export const useAddSuperHeroData = () => {
-  return useMutation(addSuperHero)
+  const queryClient = useQueryClient()
+  return useMutation(addSuperHero, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('super-heroes')
+    }
+  })
 }
